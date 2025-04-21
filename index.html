@@ -1,395 +1,157 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
-    <meta charset="UTF-8" />
-    <title>Upload Shapefile with Sidebar</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <meta charset="UTF-8">
+    <title>CMS Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
+            padding: 20px;
         }
 
-        /* Section Atas */
-        .top-section {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px;
-            background-color: #f0f0f0;
-            border-bottom: 1px solid #ccc;
-        }
-
-        .top-section div {
-            width: 23%;
-            padding: 10px;
-            text-align: center;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .top-section h4 {
-            margin-top: 0;
-            font-size: 1.2em;
-        }
-
-        /* Layout */
-        .content {
-            display: flex;
-            flex: 1;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 60%;
-            background-color: #f4f4f4;
-            border-right: 1px solid #ccc;
-            padding: 15px;
-            overflow-y: auto;
-            height: 100vh;
-        }
-
-        .sidebar h3 {
-            margin-top: 0;
-            font-size: 1.5em;
-        }
-
-        .tab-buttons button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            background: #ddd;
-            margin-bottom: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background 0.3s;
-        }
-
-        .tab-buttons button:hover {
-            background: #bbb;
-        }
-
-        .tab-buttons button.active {
-            background: #aaa;
-            font-weight: bold;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Map Section */
-        #map {
-            flex: 1;
-            height: 100%;
-            border-left: 1px solid #ccc;
-        }
-
-        /* Table Section */
-        #attribute-table {
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            background: #eee;
-            padding: 5px;
-            font-size: 0.9em;
-            max-height: 400px;
-            overflow: auto;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .top-section {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .top-section div {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-
-            .content {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-                margin-bottom: 15px;
-            }
-
-            #map {
-                width: 100%;
-                height: 400px;
-            }
+        .card-summary {
+            margin-bottom: 30px;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Section Atas -->
-    <div class="top-section">
-        <div>
-            <h4>Ketepatan Waktu</h4>
-            <p>Status data yang diunggah berdasarkan waktu terakhir diperbarui.</p>
+    <div class="container">
+        <!-- CARD -->
+        <div class="row card-summary">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Data</h5>
+                        <p class="card-text fs-4">12 Data</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Validasi Selesai</h5>
+                        <p class="card-text fs-4">8 Data</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Butuh Revisi</h5>
+                        <p class="card-text fs-4">4 Data</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div>
-            <h4>Kelengkapan</h4>
-            <p>Status kelengkapan data yang diunggah (termasuk atribut-atribut yang hilang).</p>
+
+        <!-- TABEL -->
+        <div class="table-responsive">
+            <table id="dataTable" class="table table-bordered table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nama Data</th>
+                        <th>Waktu Upload</th>
+                        <th>Validasi</th>
+                        <th>Progress</th>
+                        <th>Skor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Data Jalan Jakarta</td>
+                        <td>2025-04-15 10:22</td>
+                        <td>
+                            <div class="d-flex flex-column gap-1">
+                                <div class="d-flex gap-2">
+                                    <!-- Upload -->
+                                    <a href="validasi_map.html" class="text-primary" data-bs-toggle="tooltip"
+                                        data-bs-placement="top" title="Unggah">
+                                        <i class="bi bi-upload fs-5"></i>
+                                    </a>
+                                    <!-- Edit -->
+                                    <a href="#" class="text-secondary" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        title="Edit">
+                                        <i class="bi bi-pencil-square fs-5"></i>
+                                    </a>
+                                    <!-- View -->
+                                    <a href="#" class="text-info" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        title="Lihat Detail">
+                                        <i class="bi bi-eye fs-5"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 100%;">100%</div>
+                            </div>
+                        </td>
+                        <td>95</td>
+                    </tr>
+                    <tr>
+                        <td>Data Bangunan Bekasi</td>
+                        <td>2025-04-14 08:10</td>
+                        <td>
+                            <div class="d-flex flex-column gap-1">
+                                <div class="d-flex gap-2">
+                                    <!-- Upload -->
+                                    <a href="validasi_map.html" class="text-primary" data-bs-toggle="tooltip"
+                                        data-bs-placement="top" title="Unggah">
+                                        <i class="bi bi-upload fs-5"></i>
+                                    </a>
+                                    <!-- Edit -->
+                                    <a href="#" class="text-secondary" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        title="Edit">
+                                        <i class="bi bi-pencil-square fs-5"></i>
+                                    </a>
+                                    <!-- View -->
+                                    <a href="#" class="text-info" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        title="Lihat Detail">
+                                        <i class="bi bi-eye fs-5"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="progress">
+                                <div class="progress-bar bg-warning" style="width: 60%;">60%</div>
+                            </div>
+                        </td>
+                        <td>70</td>
+                    </tr>
+                    <!-- Tambahkan baris lainnya jika perlu -->
+                </tbody>
+            </table>
         </div>
-        <div>
-            <h4>Validitas</h4>
-            <p>Status validitas data berdasarkan format atau aturan yang telah ditentukan.</p>
-        </div>
-        <div>
-            <h4>Keunikan</h4>
-            <p>Status keunikan data, apakah terdapat duplikat atau tidak.</p>
+
+
+        <!-- Tombol ke halaman peta -->
+        <div class="mt-4 text-end">
+            <a href="validasi_map.html" class="btn btn-primary">Lanjut ke Halaman Peta</a>
         </div>
     </div>
 
-    <div class="content">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <h3>Upload Shapefile (.zip)</h3>
-            <input type="file" id="uploadZip" accept=".zip" />
-            <div class="tab-buttons">
-                <button onclick="showTab('projection')" class="active">📌 Proyeksi</button>
-                <button onclick="showTab('geometry')">🧬 Geometri</button>
-                <button onclick="showTab('table')">📋 Tabel</button>
-            </div>
-
-            <div id="projection" class="tab-content active">
-                <h4>Proyeksi</h4>
-                <div id="projection-status" style="margin-bottom: 10px; font-weight: bold; color: green;"></div>
-                <pre id="projection-info">Belum ada file yang diunggah.</pre>
-            </div>
-
-            <div id="geometry" class="tab-content">
-                <h4>GeoJSON</h4>
-                <div id="table-geometri-summary" style="margin-top: 10px; font-weight: bold;"></div>
-                <pre id="geometry-info">Belum ada file yang diunggah.</pre>
-            </div>
-
-            <div id="table" class="tab-content">
-                <h4>Tabel Atribut</h4>
-                <table id="attribute-table" class="display">
-                    <div id="table-unik-summary" style="margin-top: 10px; font-weight: bold;"></div>
-                    <thead>
-                        <tr id="table-head"></tr>
-                    </thead>
-                    <tbody id="table-body"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Map -->
-        <div id="map"></div>
-    </div>
-
-    <!-- Libs -->
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/shpjs@3.4.1/dist/shp.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#dataTable').DataTable();
+        });
+    </script>
 
     <script>
-        let map = L.map('map').setView([0, 0], 2);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        let geoJsonLayer;
-
-        // Polygon Jakarta (simplified)
-        const jakartaPolygon = {
-            "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [[
-                    [106.6894, -6.3764],
-                    [106.6894, -6.3633],
-                    [106.7328, -6.2038],
-                    [106.8691, -6.0897],
-                    [107.0302, -6.1988],
-                    [106.9965, -6.4149],
-                    [106.8732, -6.4868],
-                    [106.6894, -6.3764]
-                ]]
-            },
-            "properties": { "name": "Jakarta" }
-        };
-
-        document.getElementById('uploadZip').addEventListener('change', async function (event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const arrayBuffer = await file.arrayBuffer();
-
-            try {
-                const geojson = await shp(arrayBuffer);
-
-                // Reset map
-                if (geoJsonLayer) map.removeLayer(geoJsonLayer);
-                geoJsonLayer = L.geoJSON(geojson).addTo(map);
-                map.fitBounds(geoJsonLayer.getBounds());
-
-                // Tampilkan geometri
-                document.getElementById('geometry-info').textContent = JSON.stringify(geojson, null, 2);
-
-                // Tampilkan tabel
-                populateTable(geojson.features);
-
-                // Cek proyeksi
-                const prj = await extractPrjFromZip(file);
-                if (prj) {
-                    document.getElementById('projection-info').textContent = prj;
-                    validateProjection(prj);
-                } else {
-                    document.getElementById('projection-info').textContent = 'File .prj tidak ditemukan';
-                    document.getElementById('projection-status').textContent = '';
-                }
-
-            } catch (err) {
-                console.error('Parsing error:', err);
-                alert('Gagal membaca file ZIP.');
-            }
-        });
-
-        function validateProjection(prjText) {
-            const status = document.getElementById('projection-status');
-            const expected = 'WGS_1984_UTM_Zone_48S';
-
-            if (prjText.includes(expected)) {
-                status.innerHTML = '✅ Sesuai (WGS 1984 UTM Zone 48S)';
-                status.style.color = 'green';
-            } else {
-                status.innerHTML = '❌ Belum sesuai (bukan WGS 1984 UTM Zone 48S)';
-                status.style.color = 'red';
-            }
-        }
-
-        function populateTable(features) {
-            const head = document.getElementById('table-head');
-            const body = document.getElementById('table-body');
-            head.innerHTML = '';
-            body.innerHTML = '';
-
-            if (features.length === 0) return;
-
-            const keys = Object.keys(features[0].properties);
-            keys.push('Status'); // tambahkan kolom Status
-            keys.push('Lokasi'); // kolom tambahan
-
-            // Hitung duplikat berdasarkan string JSON dari properti
-            const rowMap = {};
-            features.forEach(f => {
-                const key = JSON.stringify(f.properties);
-                rowMap[key] = (rowMap[key] || 0) + 1;
-            });
-
-            // Buat header tabel
-            keys.forEach(key => {
-                const th = document.createElement('th');
-                th.textContent = key;
-                head.appendChild(th);
-            });
-
-            let countInside = 0;
-            let countOutside = 0;
-
-            // Isi baris tabel
-            features.forEach(f => {
-                const tr = document.createElement('tr');
-                const key = JSON.stringify(f.properties);
-                const isDuplicate = rowMap[key] > 1;
-
-                if (isDuplicate) tr.style.backgroundColor = '#ffe6e6'; // warna merah muda
-
-                // Kolom data
-                Object.values(f.properties).forEach(value => {
-                    const td = document.createElement('td');
-                    td.textContent = value;
-                    tr.appendChild(td);
-                });
-
-                // Kolom status
-                const tdStatus = document.createElement('td');
-                tdStatus.textContent = isDuplicate ? '❌ Duplikat' : '✅ Unik';
-                tr.appendChild(tdStatus);
-
-                // Cek apakah berada di dalam Jakarta
-                const isInside = turf.booleanPointInPolygon(turf.centroid(f), jakartaPolygon);
-                const tdLokasi = document.createElement('td');
-                tdLokasi.textContent = isInside ? '✅ Dalam Jakarta' : '🚫 Luar Jakarta';
-                tr.appendChild(tdLokasi);
-
-                if (isInside) countInside++;
-                else countOutside++;
-
-                body.appendChild(tr);
-            });
-
-            // Inisialisasi atau reset DataTable
-            if ($.fn.DataTable.isDataTable('#attribute-table')) {
-                $('#attribute-table').DataTable().destroy();
-            }
-            $('#attribute-table').DataTable();
-
-            // Summary
-            const summaryUnikDiv = document.getElementById('table-unik-summary');
-            summaryUnikDiv.innerHTML = `
-                ✅ Jumlah baris unik: ${Object.keys(rowMap).filter(k => rowMap[k] === 1).length} <br>
-                ❌ Jumlah baris duplikat: ${Object.values(rowMap).filter(v => v > 1).reduce((a, b) => a + b, 0)} <br><br>
-            `;
-
-            const summaryGeometriDiv = document.getElementById('table-geometri-summary');
-            summaryGeometriDiv.innerHTML = `
-                ✅ Jumlah geometri di **Dalam Jakarta**: ${countInside} <br>
-                ❌ Jumlah geometri **di Luar Jakarta**: ${countOutside}
-            `;
-
-        }
-
-        async function extractPrjFromZip(file) {
-            const zip = await JSZip.loadAsync(file);
-            const prjName = Object.keys(zip.files).find(name => name.endsWith('.prj'));
-            if (!prjName) return null;
-            return await zip.files[prjName].async('text');
-        }
-
-        function showTab(tabName) {
-            const allTabs = document.querySelectorAll('.tab-content');
-            allTabs.forEach(tab => tab.classList.remove('active'));
-
-            const buttons = document.querySelectorAll('.tab-buttons button');
-            buttons.forEach(button => button.classList.remove('active'));
-
-            document.getElementById(tabName).classList.add('active');
-            const activeButton = Array.from(buttons).find(button => button.textContent.includes(tabName.charAt(0).toUpperCase()));
-            activeButton.classList.add('active');
-        }
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el))
     </script>
+
 </body>
 
 </html>
